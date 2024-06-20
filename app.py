@@ -6,55 +6,79 @@ import os
 
 app = Flask(__name__)
 
-#app.secret_key = 'Sophia'  # Needed for session management
+
+
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')
+client_id = 'def'
+client_secret = 'abc'
+token_url = "https://api.dexcom.com/v2/oauth2/token"
+redirect_uri = 'http://localhost:5000/callback'
 
+# Sandbox URLs
+authorization_base_url = 'https://sandbox-api.dexcom.com/v2/oauth2/login'
+token_url = 'https://sandbox-api.dexcom.com/v2/oauth2/token'
+scope = ['offline_access']
 
-CLIENT_ID = 'abc'
-CLIENT_SECRET = 'def'
-REDIRECT_URI = 'http://localhost:5000/callback'
-#AUTHORIZATION_BASE_URL = 'https://sandbox-api.dexcom.com/v3/oauth2/login' # Updated for V3
-#TOKEN_URL = 'https://sandbox-api.dexcom.com/v3/oauth2/token' # Updated for V3
-AUTHORIZATION_BASE_URL = 'https://sandbox-api.dexcom.com/v2/oauth2/login'
-TOKEN_URL = 'https://sandbox-api.dexcom.com/v2/oauth2/token'
-
-# Define the necessary scopes
-SCOPES = ['offline_access']
-
+# Create an OAuth2 session instance
+dexcom = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
 
 @app.route('/')
 def index():
     """Start page with a link to login using Dexcom OAuth."""
-    return '<a href="/login">Log in with Dexcom</a>'
-
-@app.route('/login')
-def login():
-    """Redirect to Dexcom for user to authorize our app."""
-    dexcom = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI, scope=SCOPES)
-    #authorization_url, _ = dexcom.authorization_url(AUTHORIZATION_BASE_URL)
-    authorization_url, state = dexcom.authorization_url(AUTHORIZATION_BASE_URL, state=os.urandom(16).hex())
-    #authorization_url, state = dexcom.authorization_url(AUTHORIZATION_BASE_URL,
-                                                       # response_type='code',
-                                                        #state=session.get('oauth_state'))
+    authorization_url, state = dexcom.authorization_url(authorization_base_url, state=os.urandom(16).hex())
     session['oauth_state'] = state  # Save the state in session for later validation
-    return redirect(authorization_url)
+    return f'<a href="{authorization_url}">Log in with Dexcom</a>'
 
 @app.route('/callback')
 def callback():
     """Handle the callback from Dexcom after user authorization."""
-    #dexcom = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
-    dexcom = OAuth2Session(CLIENT_ID, state=session['oauth_state'], redirect_uri=REDIRECT_URI)
-    token = dexcom.fetch_token(TOKEN_URL, client_secret=CLIENT_SECRET, authorization_response=request.url)
+    dexcom = OAuth2Session(client_id, state=session['oauth_state'], redirect_uri=redirect_uri)
+    authorization_response = request.url
+    token = dexcom.fetch_token(token_url, client_secret=client_secret, authorization_response=authorization_response)
     session['oauth_token'] = token
     return 'You are logged in with Dexcom!'
+
+def get_access_token(auth_code):
+    """Exchange authorization code for an access token."""
+    token_url = 'https://sandbox-api.dexcom.com/v2/oauth2/token'
+    data = {
+        'grant_type': 'authorization_code',
+        'code': auth_code,
+        'redirect_uri': redirect_uri,
+        'client_id': client_id,
+        'client_secret': client_secret
+    }
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    response = requests.post(token_url, data=data, headers=headers)
+    return response.json()
+
+def make_api_request(access_token):
+    """Make an API request to Dexcom using the access token."""
+    api_url = 'https://sandbox-api.dexcom.com/v2/users/self/egvs'
+    headers = {'Authorization': f'Bearer {access_token}'}
+    response = requests.get(api_url, headers=headers)
+    return response.json()
+
+def refresh_access_token(refresh_token):
+    """Refresh the access token using the refresh token."""
+    token_url = 'https://sandbox-api.dexcom.com/v2/oauth2/token'
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': refresh_token,
+        'client_id': client_id,
+        'client_secret': client_secret
+    }
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    response = requests.post(token_url, data=data, headers=headers)
+    return response.json()
 
 @app.route('/data')
 def get_data():
     """Fetch data from Dexcom API using the stored OAuth token."""
-    dexcom = OAuth2Session(CLIENT_ID, token=session['oauth_token'])
-    #response = dexcom.get('https://sandbox-api.dexcom.com/your-api-endpoint')
-    response = dexcom.get('https://sandbox-api.dexcom.com/v2/users/self/dataRange')
-    return response.json()
+    token = session.get('oauth_token')
+    access_token = token['access_token']
+    data = make_api_request(access_token)
+    return data
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -30,8 +30,13 @@ def callback():
         }
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         response = requests.post(token_url, data=data, headers=headers)
+        response.raise_for_status()
         token = response.json()
         session['oauth_token'] = token
+        #return redirect(url_for('data_range'))
+        #return redirect(url_for('egvs_route'))
+        #return redirect(url_for('index'))
+        #return redirect(url_for('dataRange'))
         return redirect(url_for('profile'))
     except Exception as e:
         return jsonify({'error': 'Failed to fetch token', 'description': str(e)}), 500
@@ -46,6 +51,7 @@ def refresh_access_token(refresh_token):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     try:
         response = requests.post(token_url, data=data, headers=headers)
+        response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
         return {'error': str(e)}

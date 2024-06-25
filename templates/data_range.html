@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Data Range{% endblock %}
+
+{% block content %}
+    <h1>Data Range</h1>
+    <h2>Calibrations</h2>
+    <p><strong>Start:</strong> {{ data_range_data.calibrations.start.systemTime }} (System Time), {{ data_range_data.calibrations.start.displayTime }} (Display Time)</p>
+    <p><strong>End:</strong> {{ data_range_data.calibrations.end.systemTime }} (System Time), {{ data_range_data.calibrations.end.displayTime }} (Display Time)</p>
+
+    <h2>EGVs</h2>
+    <p><strong>Start:</strong> {{ data_range_data.egvs.start.systemTime }} (System Time), {{ data_range_data.egvs.start.displayTime }} (Display Time)</p>
+    <p><strong>End:</strong> {{ data_range_data.egvs.end.systemTime }} (System Time), {{ data_range_data.egvs.end.displayTime }} (Display Time)</p>
+
+    <h2>Events</h2>
+    <p><strong>Start:</strong> {{ data_range_data.events.start.systemTime }} (System Time), {{ data_range_data.events.start.displayTime }} (Display Time)</p>
+    <p><strong>End:</strong> {{ data_range_data.events.end.systemTime }} (System Time), {{ data_range_data.events.end.displayTime }} (Display Time)</p>
+{% endblock %}

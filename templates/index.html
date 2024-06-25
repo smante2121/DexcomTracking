@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to the Glucose Monitoring App</h1>
+    <p>Select an option from the menu to view data.</p>
+    <div>
+        <a href="/dataRange">View Data Range</a>
+        <a href="/egvs">View EGVs</a>
+    </div>
+{% endblock %}

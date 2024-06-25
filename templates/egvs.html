@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Estimated Glucose Values (EGVs){% endblock %}
+
+{% block content %}
+    <h1>Estimated Glucose Values (EGVs)</h1>
+    <table border="1">
+        <tr>
+            <th>Display Time</th>
+            <th>System Time</th>
+            <th>Value (mg/dL)</th>
+            <th>Trend</th>
+            <th>Trend Rate</th>
+        </tr>
+        {% for item in egvs_data %}
+            <tr>
+                <td>{{ item.displayTime }}</td>
+                <td>{{ item.systemTime }}</td>
+                <td>{{ item.value }}</td>
+                <td>{{ item.trend or 'N/A' }}</td>
+                <td>{{ item.trendRate or 'N/A' }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

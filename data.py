@@ -1,3 +1,5 @@
+from datetime import timedelta, datetime
+
 import requests
 import logging
 import auth
@@ -32,3 +34,28 @@ def get_data():
     if 'error' in response:
         return jsonify(response), 500
     return jsonify(response)
+
+
+def get_data():
+    token = session.get('oauth_token', {})
+    if not token:
+        return jsonify({'error': 'No token found'}), 401
+    access_token = token.get('access_token')
+    if not access_token:
+        access_token_info = auth.refresh_access_token(token.get('refresh_token'))
+        access_token = access_token_info.get('access_token')
+        if not access_token:
+            return jsonify({'error': 'Failed to refresh token'}), 401
+        session['oauth_token'] = access_token_info  # Update the session with the new token
+
+    # Using current date for end_date and the previous day for start_date
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=1)
+    start_date_str = start_date.isoformat() + 'Z'
+    end_date_str = end_date.isoformat() + 'Z'
+
+    response = make_api_request(access_token, 'https://sandbox-api.dexcom.com/v2/users/self/egvs', {'startDate': start_date_str, 'endDate': end_date_str})
+    if 'error' in response:
+        return jsonify(response), 500
+    return jsonify(response)
+

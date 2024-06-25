@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Calibrations{% endblock %}
+
+{% block content %}
+    <h1>Calibrations</h1>
+    <table border="1">
+        <tr>
+            <th>System Time</th>
+            <th>Display Time</th>
+            <th>Value</th>
+            <th>Unit</th>
+        </tr>
+        {% for calibration in calibrations_data %}
+            <tr>
+                <td>{{ calibration.systemTime }}</td>
+                <td>{{ calibration.displayTime }}</td>
+                <td>{{ calibration.value }}</td>
+                <td>{{ calibration.unit }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+

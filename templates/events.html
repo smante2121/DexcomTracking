@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Events{% endblock %}
+
+{% block content %}
+    <h1>Events</h1>
+    <table border="1">
+        <tr>
+            <th>System Time</th>
+            <th>Display Time</th>
+            <th>Event Type</th>
+            <th>Event SubType</th>
+            <th>Value</th>
+            <th>Unit</th>
+            <th>Event ID</th>
+            <th>Event Status</th>
+        </tr>
+        {% for event in events_data %}
+            <tr>
+                <td>{{ event.systemTime }}</td>
+                <td>{{ event.displayTime }}</td>
+                <td>{{ event.eventType }}</td>
+                <td>{{ event.eventSubType }}</td>
+                <td>{{ event.value }}</td>
+                <td>{{ event.unit }}</td>
+                <td>{{ event.eventId }}</td>
+                <td>{{ event.eventStatus }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+

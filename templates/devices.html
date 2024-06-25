@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Devices{% endblock %}
+
+{% block content %}
+    <h1>Devices</h1>
+    <table border="1">
+        <tr>
+            <th>Transmitter Generation</th>
+            <th>Display Device</th>
+            <th>Last Upload Date</th>
+            <th>Alert Schedules</th>
+            <th>Alert Settings</th>
+        </tr>
+        {% for device in devices_data %}
+            <tr>
+                <td>{{ device.transmitterGeneration }}</td>
+                <td>{{ device.displayDevice }}</td>
+                <td>{{ device.lastUploadDate }}</td>
+                <td>
+                    <ul>
+                        {% for schedule in device.alertScheduleList %}
+                            <li>{{ schedule.alertScheduleName }} ({{ 'Enabled' if schedule.isEnabled else 'Disabled' }})</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for alert in device.alertSettings %}
+                            <li>{{ alert.alertName }}: {{ alert.value }} {{ alert.unit }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

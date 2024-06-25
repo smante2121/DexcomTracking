@@ -1,11 +1,14 @@
 from flask import Flask, render_template, jsonify, session, redirect, url_for, request
 import os
+from calibrations import Calibrations
 from dataRange import DataRange
+from devices import Devices
 from egvs import EGVs
 from datetime import datetime, timedelta, timezone
 import auth
 import data
 import logging
+from events import Events
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -42,6 +45,53 @@ def egvs_route():
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
+
+
+@app.route('/events', methods=["GET"])
+def events():
+    try:
+        start_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc) - timedelta(days=1))
+        end_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc))
+        events_instance = Events(start_date, end_date)
+        data = events_instance.get_data()
+        if 'error' in data:
+            return jsonify(data), 500
+        return render_template('events.html', events_data=data)
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+
+@app.route('/devices', methods=["GET"])
+def devices():
+    try:
+        start_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc) - timedelta(days=1))
+        end_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc))
+        devices_instance = Devices(start_date, end_date)
+        data = devices_instance.get_data()
+        if 'error' in data:
+            return jsonify(data), 500
+        return render_template('devices.html', devices_data=data)
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+
+
+@app.route('/calibrations', methods=["GET"])
+def calibrations():
+    try:
+        start_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc) - timedelta(days=1))
+        end_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc))
+        calibrations_instance = Calibrations(start_date, end_date)
+        data = calibrations_instance.get_data()
+        if 'error' in data:
+            return jsonify(data), 500
+        return render_template('calibrations.html', calibrations_data=data)
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+
+
+
 @app.route('/dataRange', methods=["GET"])
 def data_range():
     data_range_instance = DataRange()
@@ -50,6 +100,9 @@ def data_range():
         return render_template('data_range.html', data_range_data=data)
     else:
         return jsonify({'error': 'Data missing or inaccessible for user'}), 500
+
+
+
 
 def format_datetime_for_dexcom_api(dt):
     return dt.replace(microsecond=0, tzinfo=None).isoformat()

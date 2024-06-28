@@ -1,0 +1,33 @@
+{% extends "base_v3.html" %}
+
+{% block title %}Alerts (v3){% endblock %}
+
+{% block content %}
+    <h1>Alerts (v3)</h1>
+    <table border="1">
+        <tr>
+            <th>Record ID</th>
+            <th>System Time</th>
+            <th>Display Time</th>
+            <th>Alert Name</th>
+            <th>Alert State</th>
+            <th>Display Device</th>
+            <th>Transmitter Generation</th>
+            <th>Transmitter ID</th>
+            <th>Display App</th>
+        </tr>
+        {% for alert in alerts_data %}
+            <tr>
+                <td>{{ alert.recordId }}</td>
+                <td>{{ alert.systemTime }}</td>
+                <td>{{ alert.displayTime }}</td>
+                <td>{{ alert.alertName }}</td>
+                <td>{{ alert.alertState }}</td>
+                <td>{{ alert.displayDevice }}</td>
+                <td>{{ alert.transmitterGeneration }}</td>
+                <td>{{ alert.transmitterId }}</td>
+                <td>{{ alert.displayApp }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

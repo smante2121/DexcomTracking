@@ -15,11 +15,15 @@ class Devices:
             return
 
         url = "https://sandbox-api.dexcom.com/v2/users/self/devices"
+        #url_deployment_v2 = "https://api.dexcom.com/v2/users/self/devices"
+        #url_deployment_v3 = "https://api.dexcom.com/v3/users/self/devices"
         headers = {"Authorization": f"Bearer {access_token}"}
         params = {'startDate': self.start_date, 'endDate': self.end_date}
 
         try:
             response = requests.get(url, headers=headers, params=params)
+            #response = requests.get(url_deployment_v2, headers=headers, params=params)
+            #response = requests.get(url_deployment_v3, headers=headers, params=params)
             response.raise_for_status()  # Ensure HTTP errors are caught
             data = response.json()
 

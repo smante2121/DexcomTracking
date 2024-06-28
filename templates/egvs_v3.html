@@ -1,0 +1,41 @@
+{% extends "base_v3.html" %}
+
+{% block title %}Estimated Glucose Values (EGVs) (v3){% endblock %}
+
+{% block content %}
+    <h1>Estimated Glucose Values (EGVs) (v3)</h1>
+    <table border="1">
+        <tr>
+            <th>Display Time</th>
+            <th>System Time</th>
+            <th>Value (mg/dL)</th>
+            <th>Trend</th>
+            <th>Trend Rate</th>
+            <th>Record ID</th>
+            <th>Status</th>
+            <th>Unit</th>
+            <th>Rate Unit</th>
+            <th>Display Device</th>
+            <th>Transmitter ID</th>
+            <th>Transmitter Ticks</th>
+            <th>Transmitter Generation</th>
+        </tr>
+        {% for item in egvs_data %}
+            <tr>
+                <td>{{ item.displayTime }}</td>
+                <td>{{ item.systemTime }}</td>
+                <td>{{ item.value }}</td>
+                <td>{{ item.trend or 'N/A' }}</td>
+                <td>{{ item.trendRate or 'N/A' }}</td>
+                <td>{{ item.recordId }}</td>
+                <td>{{ item.status or 'N/A' }}</td>
+                <td>{{ item.unit }}</td>
+                <td>{{ item.rateUnit }}</td>
+                <td>{{ item.displayDevice }}</td>
+                <td>{{ item.transmitterId or 'N/A' }}</td>
+                <td>{{ item.transmitterTicks }}</td>
+                <td>{{ item.transmitterGeneration }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

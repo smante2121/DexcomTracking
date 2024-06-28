@@ -1,0 +1,33 @@
+{% extends "base_v3.html" %}
+
+{% block title %}Calibrations (v3){% endblock %}
+
+{% block content %}
+    <h1>Calibrations (v3)</h1>
+    <table border="1">
+        <tr>
+            <th>System Time</th>
+            <th>Display Time</th>
+            <th>Value</th>
+            <th>Unit</th>
+            <th>Record ID</th>
+            <th>Display Device</th>
+            <th>Transmitter ID</th>
+            <th>Transmitter Ticks</th>
+            <th>Transmitter Generation</th>
+        </tr>
+        {% for calibration in calibrations_data %}
+            <tr>
+                <td>{{ calibration.systemTime }}</td>
+                <td>{{ calibration.displayTime }}</td>
+                <td>{{ calibration.value }}</td>
+                <td>{{ calibration.unit }}</td>
+                <td>{{ calibration.recordId }}</td>
+                <td>{{ calibration.displayDevice }}</td>
+                <td>{{ calibration.transmitterId }}</td>
+                <td>{{ calibration.transmitterTicks }}</td>
+                <td>{{ calibration.transmitterGeneration }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

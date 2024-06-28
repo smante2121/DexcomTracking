@@ -1,0 +1,16 @@
+{% extends "base_v3.html" %}
+
+{% block title %}Home (v3){% endblock %}
+
+{% block content %}
+    <h1>Welcome to the Glucose Monitoring App (v3)</h1>
+    <p>Select an option from the menu to view data.</p>
+    <div>
+        <a href="/dataRange_v3">View Data Range</a>
+        <a href="/egvs_v3">View EGVs</a>
+        <a href="/events_v3">View Events</a>
+        <a href="/calibrations_v3">View Calibrations</a>
+        <a href="/devices_v3">View Devices</a>
+        <a href="/alerts_v3">View Alerts</a>
+    </div>
+{% endblock %}

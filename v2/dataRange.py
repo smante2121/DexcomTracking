@@ -14,10 +14,14 @@ class DataRange:
 
 
         url = "https://sandbox-api.dexcom.com/v2/users/self/dataRange"
+        #deployment_url_v2 = "https://api.dexcom.com/v2/users/self/dataRange"
+        #deployment_url_v3 = "https://api.dexcom.com/v3/users/self/dataRange"
         headers = {"Authorization": f"Bearer {access_token}"}
 
         try:
             response = requests.get(url, headers=headers)
+            #response = requests.get(deployment_url_v2, headers=headers)
+            #response = requests.get(deployment_url_v3, headers=headers)
             response.raise_for_status()
             self.data_range = response.json()
         except requests.exceptions.HTTPError as http_err:

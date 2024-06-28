@@ -1,9 +1,9 @@
 import requests
 from flask import session
 
-class Calibrations:
+class EventsV3:
     def __init__(self, start_date, end_date):
-        self.calibrations = {}
+        self.events = {}
         self.start_date = start_date
         self.end_date = end_date
         self.load_data()
@@ -14,23 +14,32 @@ class Calibrations:
             self.events = {'error': 'Authentication required'}
             return
 
-        url = "https://sandbox-api.dexcom.com/v2/users/self/calibrations"
+        url = "https://api.dexcom.com/v3/users/self/events"
+        # deployment_url_v3 = "https://api.dexcom.com/v3/users/self/events"
         headers = {"Authorization": f"Bearer {access_token}"}
         params = {'startDate': self.start_date, 'endDate': self.end_date}
 
         try:
             response = requests.get(url, headers=headers, params=params)
+            # response = requests.get(deployment_url_v3, headers=headers, params=params)
             response.raise_for_status()  # Ensure HTTP errors are caught
             data = response.json()
 
             # Transform data here to ensure it matches the Dexcom description
             transformed_data = []
-            for record in data.get('events', []):
+            for record in data.get('records', []):
                 transformed_record = {
                     'systemTime': record.get('systemTime'),
                     'displayTime': record.get('displayTime'),
+                    'eventType': record.get('eventType'),
+                    'eventSubType': record.get('eventSubType'),
                     'value': record.get('value'),
-                    'unit': record.get('unit')
+                    'unit': record.get('unit'),
+                    'recordId': record.get('recordId'),
+                    'eventStatus': record.get('eventStatus'),
+                    'transmitterId': record.get('transmitterId'),
+                    'transmitterGeneration': record.get('transmitterGeneration'),
+                    'displayDevice': record.get('displayDevice')
                 }
                 transformed_data.append(transformed_record)
 
@@ -41,4 +50,4 @@ class Calibrations:
             self.events = {'error': 'Failed to retrieve data', 'details': str(req_err)}
 
     def get_data(self):
-        return self.calibrations
+        return self.events

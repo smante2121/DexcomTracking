@@ -1,14 +1,19 @@
-from flask import Flask, render_template, jsonify, session, redirect, url_for, request
+from flask import Flask, render_template, jsonify
 import os
-from calibrations import Calibrations
-from dataRange import DataRange
-from devices import Devices
-from egvs import EGVs
+from v2.calibrations import Calibrations
+from v2.dataRange import DataRange
+from v2.devices import Devices
+from v2.egvs import EGVs
 from datetime import datetime, timedelta, timezone
 import auth
 import data
-import logging
-from events import Events
+from v2.events import Events
+# from v3.devices_v3 import DevicesV3
+# from v3.events_v3 import EventsV3
+#from v3.calibrations_v3 import CalibrationsV3
+# from v3.egvs_v3 import EGVsV3
+# from v3.data_range_v3 import DataRangeV3
+# from v3.alerts_v3 import AlertsV3
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
@@ -23,6 +28,7 @@ def index():
 def profile():
 
     return render_template('index.html')
+    #return render_template('index_v3.html')
 
 @app.route('/callback', methods=["GET"])
 def callback():
@@ -44,6 +50,15 @@ def egvs_route():
         return render_template('egvs.html', egvs_data=data)
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+    # Uncomment the following block to use v3 EGVs
+    # try:
+    #     egvs_instance_v3 = EGVsV3(start_date, end_date)
+    #     data = egvs_instance_v3.get_data()
+    #     if 'error' in data:
+    #         return jsonify(data), 500
+    #     return render_template('egvs_v3.html', egvs_data=data)
+    # except Exception as e:
+    #     return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 
@@ -59,6 +74,15 @@ def events():
         return render_template('events.html', events_data=data)
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+    # Uncomment the following block to use v3 events
+    # try:
+    #     events_instance_v3 = EventsV3(start_date, end_date)
+    #     data = events_instance_v3.get_data()
+    #     if 'error' in data:
+    #         return jsonify(data), 500
+    #     return render_template('events_v3.html', events_data=data)
+    # except Exception as e:
+    #     return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @app.route('/devices', methods=["GET"])
@@ -73,7 +97,15 @@ def devices():
         return render_template('devices.html', devices_data=data)
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
-
+    # Uncomment the following block to use v3 devices
+    # try:
+    #     devices_instance_v3 = DevicesV3()
+    #     data = devices_instance_v3.get_data()
+    #     if 'error' in data:
+    #         return jsonify(data), 500
+    #     return render_template('devices_v3.html', devices_data=data)
+    # except Exception as e:
+    #     return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @app.route('/calibrations', methods=["GET"])
@@ -88,8 +120,15 @@ def calibrations():
         return render_template('calibrations.html', calibrations_data=data)
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
-
-
+    # Uncomment the following block to use v3 calibrations
+    # try:
+    #     calibrations_instance_v3 = CalibrationsV3(start_date, end_date)
+    #     data = calibrations_instance_v3.get_data()
+    #     if 'error' in data:
+    #         return jsonify(data), 500
+    #     return render_template('calibrations_v3.html', calibrations_data=data)
+    # except Exception as e:
+    #     return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 @app.route('/dataRange', methods=["GET"])
@@ -100,8 +139,30 @@ def data_range():
         return render_template('data_range.html', data_range_data=data)
     else:
         return jsonify({'error': 'Data missing or inaccessible for user'}), 500
+    # Uncomment the following block to use v3 dataRange
+    # try:
+    #     last_sync_time = request.args.get('lastSyncTime')
+    #     data_range_instance_v3 = DataRangeV3(last_sync_time)
+    #     data = data_range_instance_v3.get_data()
+    #     if 'error' in data:
+    #         return jsonify(data), 500
+    #     return render_template('data_range_v3.html', data_range_data=data)
+    # except Exception as e:
+    #     return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
+#@app.route('/alerts', methods=["GET"])
+#def alerts_route():
+    #try:
+        #start_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc) - timedelta(days=1))
+        #end_date = format_datetime_for_dexcom_api(datetime.now(timezone.utc))
+        #alerts_instance = AlertsV3(start_date, end_date)
+        #data = alerts_instance.get_data()
+        #if 'error' in data:
+            #return jsonify(data), 500
+        #return render_template('alerts_v3.html', alerts_data=data)
+    #except Exception as e:
+        #return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
 def format_datetime_for_dexcom_api(dt):

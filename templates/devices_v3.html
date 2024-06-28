@@ -1,0 +1,65 @@
+{% extends "base_v3.html" %}
+
+{% block title %}Devices (v3){% endblock %}
+
+{% block content %}
+    <h1>Devices (v3)</h1>
+    <table border="1">
+        <tr>
+            <th>Transmitter Generation</th>
+            <th>Display Device</th>
+            <th>Display App</th>
+            <th>Last Upload Date</th>
+            <th>Transmitter ID</th>
+            <th>Alert Schedules</th>
+        </tr>
+        {% for device in devices_data %}
+            <tr>
+                <td>{{ device.transmitterGeneration }}</td>
+                <td>{{ device.displayDevice }}</td>
+                <td>{{ device.displayApp }}</td>
+                <td>{{ device.lastUploadDate }}</td>
+                <td>{{ device.transmitterId }}</td>
+                <td>
+                    <ul>
+                        {% for schedule in device.alertSchedules %}
+                            <li>
+                                {{ schedule.alertScheduleSettings.alertScheduleName }} ({{ 'Enabled' if schedule.alertScheduleSettings.isEnabled else 'Disabled' }})
+                                <ul>
+                                    <li>Start Time: {{ schedule.alertScheduleSettings.startTime }}</li>
+                                    <li>End Time: {{ schedule.alertScheduleSettings.endTime }}</li>
+                                    <li>Days of Week: {{ schedule.alertScheduleSettings.daysOfWeek | join(', ') }}</li>
+                                    <li>Active: {{ 'Yes' if schedule.alertScheduleSettings.isActive else 'No' }}</li>
+                                    <li>Override: {{ 'Enabled' if schedule.alertScheduleSettings.override.isOverrideEnabled else 'Disabled' }}</li>
+                                    <li>Override Mode: {{ schedule.alertScheduleSettings.override.mode }}</li>
+                                    <li>Override End Time: {{ schedule.alertScheduleSettings.override.endTime }}</li>
+                                    <li>
+                                        Alert Settings:
+                                        <ul>
+                                            {% for alert in schedule.alertSettings %}
+                                                <li>
+                                                    {{ alert.alertName }}: {{ alert.value }} {{ alert.unit }}
+                                                    <ul>
+                                                        <li>Snooze: {{ alert.snooze }}</li>
+                                                        <li>Enabled: {{ 'Yes' if alert.enabled else 'No' }}</li>
+                                                        <li>System Time: {{ alert.systemTime }}</li>
+                                                        <li>Display Time: {{ alert.displayTime }}</li>
+                                                        <li>Delay: {{ alert.delay }}</li>
+                                                        <li>Secondary Trigger Condition: {{ alert.secondaryTriggerCondition }}</li>
+                                                        <li>Sound Theme: {{ alert.soundTheme }}</li>
+                                                        <li>Sound Output Mode: {{ alert.soundOutputMode }}</li>
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+

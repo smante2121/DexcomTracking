@@ -7,10 +7,14 @@ from flask import jsonify, session
 
 def make_api_request(access_token, start_date, end_date):
     api_url = 'https://sandbox-api.dexcom.com/v2/users/self/egvs'
+    #api_url_deployment_v2 = 'https://api.dexcom.com/v2/users/self/egvs'
+    #api_url_deployment_v3 = 'https://api.dexcom.com/v3/users/self/egvs'
     headers = {'Authorization': f'Bearer {access_token}'}
     query = {"startDate": start_date, "endDate": end_date}
     try:
         response = requests.get(api_url, headers=headers, params=query)
+        #response = requests.get(api_url_deployment_v2, headers=headers, params=query)
+        #response = requests.get(api_url_deployment_v3, headers=headers, params=query)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -55,6 +59,8 @@ def get_data():
     end_date_str = end_date.isoformat() + 'Z'
 
     response = make_api_request(access_token, 'https://sandbox-api.dexcom.com/v2/users/self/egvs', {'startDate': start_date_str, 'endDate': end_date_str})
+    #response = make_api_request(access_token, 'https://api.dexcom.com/v2/users/self/egvs', {'startDate': start_date_str, 'endDate': end_date_str})
+    #response = make_api_request(access_token, 'https://api.dexcom.com/v3/users/self/egvs', {'startDate': start_date_str, 'endDate': end_date_str})
     if 'error' in response:
         return jsonify(response), 500
     return jsonify(response)
